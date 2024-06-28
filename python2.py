@@ -2,18 +2,21 @@ def greet(name):
     print(f'hello,{name}')
 greet('binu')
 
+# function
 def addition(a, b):
     sum = a+b
     print(f'the sum is {sum}')
     print('the sum is:',sum)
 addition(2,3)
 
+# return
 def add_numbers(num1,num2):
     return num1+num2
 
 result=add_numbers(5,7)
 print('the sum is:', result)
 
+# lambda
 add = lambda a,b : a+b
 multiply = lambda x, y : x*y 
 
