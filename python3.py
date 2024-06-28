@@ -59,8 +59,7 @@ class employee:
         print(f'name: {self._name}')
         print(f'Employee id : {self._emp_id}')
         print (f'salary : {self._salary}')
-        
-        
+
 employee1 = employee('bob',1, 1000)
 employee1.display_info()
 bonus = employee1.calculate_bonus()
