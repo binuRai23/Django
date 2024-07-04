@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+        }
+
+        header h1 {
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        article {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        article h2 {
+            margin-top: 0;
+        }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .buttons {
+            margin-top: 10px;
+        }
+
+        .image {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Blog</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+        <button onclick="showCreateForm()">Create New Post</button>
+        <div id="createForm" class="hidden">
+            <h2>Create New Post</h2>
+            <label for="title">Title:</label>
+            <input type="text" id="title">
+            <label for="subtitle">Subtitle:</label>
+            <input type="text" id="subtitle">
+            <label for="description">Description:</label>
+            <textarea id="description"></textarea>
+            <label for="image">Image:</label>
+            <input type="file" id="image" accept="image/*">
+            <button onclick="createPost()">Create</button>
+        </div>
+        
+        <div id="posts"></div>
+    </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 My Blog. All rights reserved.</p>
+    </footer>
+    <script>
+        let posts = [];
+
+        function showCreateForm() {
+            document.getElementById('createForm').classList.toggle('hidden');
+        }
+
+        function createPost() {
+            const title = document.getElementById('title').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const description = document.getElementById('description').value;
+            const imageInput = document.getElementById('image');
+            const imageFile = imageInput.files[0];
+
+            if (title && subtitle && description && imageFile) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const post = {
+                        id: Date.now(),
+                        title: title,
+                        subtitle: subtitle,
+                        description: description,
+                        image: event.target.result,
+                        date: new Date().toISOString().split('T')[0]
+                    };
+                    posts.push(post);
+                    renderPosts();
+                    clearForm();
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                alert('Please fill in all fields and select an image.');
+            }
+        }
+
+        function editPost(id) {
+            const post = posts.find(post => post.id === id);
+            document.getElementById('title').value = post.title;
+            document.getElementById('subtitle').value = post.subtitle;
+            document.getElementById('description').value = post.description;
+            showCreateForm();
+            deletePost(id);
+        }
+
+        function deletePost(id) {
+            posts = posts.filter(post => post.id !== id);
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = '';
+            posts.forEach(post => {
+                const article = document.createElement('article');
+                article.innerHTML = `
+                    <h2>${post.title}</h2>
+                    <h3>${post.subtitle}</h3>
+                    <p>Published on ${post.date}</p>
+                    <img src="${post.image}" alt="${post.title}" class="image">
+                    <p>${post.description}</p>
+                    <div class="buttons">
+                        <button onclick="editPost(${post.id})">Edit</button>
+                        <button onclick="deletePost(${post.id})">Delete</button>
+                    </div>
+                `;
+                postsContainer.appendChild(article);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('title').value = '';
+            document.getElementById('subtitle').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('image').value = '';
+            showCreateForm();
+        }
+    </script>
+</body>
+</html>
