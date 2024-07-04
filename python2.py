@@ -30,9 +30,9 @@ test(1,2,3)
 def lis(num): 
     for i in num: 
         print(i)
-
 lis([1,2,4])
 lis((1,2,3))
+
 
 def cube(num):
     for i in num: 
